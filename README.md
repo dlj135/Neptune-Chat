@@ -13,9 +13,11 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 ## Project Setup
 
 ```sh
-MAKE sure Node.js is up to its latest version, use this link below into download the lastest version
+MAKE sure Node.js is up to its latest version, use this link below to download the lastest version of node
 https://nodejs.org/en
 THEN make a folder name it anything, cd into that folder and run these commands
+git clone https://github.com/Tre0207/WELOCKEDIN.git
+cd Neptune
 npm install
 npm install firebase
 npm install vue-router@4
