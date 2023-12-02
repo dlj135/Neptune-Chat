@@ -29,7 +29,7 @@
 
 <script setup>
     import { ref } from 'vue'
-    import { getAuth, createUserWithEmailAndPassword } from "@/firebase"
+    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup  } from "@/firebase"
     import { useRouter } from 'vue-router';
     const email = ref("");
     const password = ref("");
@@ -49,7 +49,14 @@
         })
     }
     const signInWithGoogle = () => {
-		
+		const provider = new GoogleAuthProvider();
+        signInWithPopup(getAuth(), provider)
+        .then((result) => {
+           console.log(result.user);
+           router.push("/giveusanA")
+        }).catch((error) => {
+            alert("Something went wrong :/\n" + error.code)
+        }); 
 	}
 
     const loginPage = () => {
