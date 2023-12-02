@@ -13,8 +13,7 @@
                 placeholder="Password" 
                 v-model="password" />
             <div v-if="errMsg" class="error">{{ errMsg }}</div>
-            <div class="space">
-            </div>
+            <div class="space"></div>
             <div>
                 <button type="button" @click="register">Submit</button>
                 <button type="button" @click="signInWithGoogle">Sign In With Google</button>
@@ -42,7 +41,7 @@ const register = () => {
     .then((data) => {
         alert("Successfully Login!")
         console.log("Successfully Login! " + data )
-        router.push('/')
+        router.push('/giveusanA')
     })
     .catch((error) => {
         console.log(error.code)
