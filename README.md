@@ -17,7 +17,7 @@ MAKE sure Node.js is up to its latest version, use this link below to download t
 https://nodejs.org/en
 THEN make a folder name it anything, cd into that folder and run these commands
 git clone https://github.com/Tre0207/WELOCKEDIN.git
-cd Neptune
+cd WELOCKEDIN
 npm install
 npm install firebase
 npm install vue-router@4
