@@ -16,7 +16,8 @@
                 </div>
                 <div>
                     <button type="button" @click="register">Submit</button>
-                    <button type="button" @click="signInWithGoogle">Sign In With google</button>
+                    <button type="button" @click="signInWithGoogle">Sign In With Google</button>
+                    <button type="button" @click="loginPage">Back to Login</button>
                 </div>
                 
 				
@@ -51,6 +52,9 @@
 		
 	}
 
+    const loginPage = () => {
+    router.push('/')
+    }
 	
 </script>
 
@@ -108,7 +112,7 @@
         border-radius: 25px;
     }
     .space{
-        margin-bottom: 25%;
+        margin-bottom: 20%;
     }
     
 </style>
