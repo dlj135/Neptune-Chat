@@ -13,7 +13,12 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 ## Project Setup
 
 ```sh
+MAKE sure Node.js is up to its latest version, use this link below into download the lastest version
+https://nodejs.org/en
+THEN make a folder name it anything, cd into that folder and run these commands
 npm install
+npm install firebase
+npm install vue-router@4
 ```
 
 ### Compile and Hot-Reload for Development
