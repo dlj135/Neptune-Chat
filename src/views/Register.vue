@@ -40,7 +40,7 @@
         .then((data) => {
             alert("Successfully registered!")
             console.log("Successfully registered! " + data )
-            router.push('/login')
+            router.push('/giveusanA')
         })
         .catch((error) => {
             alert(error.message)
