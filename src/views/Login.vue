@@ -17,7 +17,8 @@
             </div>
             <div>
                 <button type="button" @click="register">Submit</button>
-                <button type="button" @click="signInWithGoogle">Sign In With google</button>
+                <button type="button" @click="signInWithGoogle">Sign In With Google</button>
+                <button type="button" @click="registrationPage">Not Registered?</button>
             </div>
             
             
@@ -67,7 +68,9 @@ const register = () => {
 const signInWithGoogle = () => {
     
 }
-
+const registrationPage = () => {
+    router.push('/register')
+}
 
 </script>
 
@@ -125,7 +128,7 @@ const signInWithGoogle = () => {
     border-radius: 25px;
 }
 .space{
-    margin-bottom: 25%;
+    margin-bottom: 20%;
 }
 .error{
     color: red;

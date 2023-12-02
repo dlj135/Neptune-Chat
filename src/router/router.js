@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Main from '../views/MainPage.vue'
 
 // const routes  = [
 //     { 
@@ -31,9 +30,9 @@ import Main from '../views/MainPage.vue'
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: "/", component: () => import("../views/MainPage.vue") },
+        { path: "/", component: () => import("../views/Login.vue") },
         { path: "/register", component: () => import("../views/Register.vue") },
-        { path: "/login", component: () => import("../views/Login.vue") },
+        { path: "/giveusanA", component: () => import("../views/MainPage.vue") },
 
     ]
 });
