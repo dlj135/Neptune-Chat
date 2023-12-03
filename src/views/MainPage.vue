@@ -67,10 +67,15 @@
     import { onMounted, ref } from "vue";
     import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp } from "@/firebase";
     import { useRouter } from 'vue-router';
+    // this routes the page back to login if the user signs out
     const router = useRouter()
+    // this is the login flag
     const isLoggedIn = ref(false);
+    // this takes user input from the text box
     const newmessage = ref('')
 
+    //this handles the log out button and allows the user to stay signed
+    // even with a refresh
     let auth;
     onMounted(() => {
         auth = getAuth();
@@ -83,6 +88,7 @@
             }
         });
     });
+    // this is the google signout function
     const handleSignOut = () => {
         signOut(auth).then(() => {
             router.push('/')
@@ -93,7 +99,8 @@
         // messagesCollection.forEach((task) => {
         // console.log(task)
         // });
-    // Sending a message
+
+    // Sending a message to the db
     const addMessage = async () => {
         const user = auth.currentUser;
         if (user !== null) {
@@ -103,6 +110,7 @@
                 messageText: newmessage.value,
                 senderId: uid,
                 // SUNCuNADHrMJ8bbWYdKmkRtjcC13 is user: messager1@gmail.com 
+                // still need to work on how the user can choose who to send to
                 participants: [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'],
                 createdAt: serverTimestamp(),
             });
@@ -128,6 +136,7 @@
     // });
 </script>
 
+<!-- Page styles -->
 <style>
     .background{
         position: fixed;
