@@ -153,8 +153,8 @@
 
     .profile-picture {
         display: inline-block;
-        width: 50px;
-        height: 50px;
+        width: 25px;
+        height: 25px;
         border-radius: 50%;
         background-color: #ccc;
         margin-left: 25px;
@@ -178,5 +178,133 @@
         color: #fff;
         cursor: pointer;
     }
+
+
+    /* sidebar */
+    .sidebar {
+        margin: 0;
+        padding: 0;
+        width: 15%;
+        background-color: #343434;
+        position: absolute;
+        left: 10px;
+        height: 85%;
+        border-radius: 25px;
+        border: 1px solid rgb(130, 171, 247);
+    }
+
+    .sidebar h5 {
+        margin: 10%;
+        font-weight: bold;
+        color: white;
+    }
+
+    .sidebar hr {
+        color: rgb(130, 171, 247);
+    }
+
+    .sidebar a {
+        display: block;
+        color: white !important;
+        padding: 16px;
+        text-decoration: none;
+    }
+        
+    .sidebar a.active {
+        background-color: rgb(130, 171, 247);
+    }
+
+    .sidebar a:hover:not(.active) {
+        background-color: #a9569c;
+        
+    }
     
+
+    /* Middle of the page */
+div.name {
+    margin: 0;
+    padding: 0;
+    width: 75%;
+    height: 78%;
+    position: absolute;
+    right: 7%;
+    color: white;
+  }
+  .name h5 {
+    margin: 2%;
+    text-align: left;
+    font-weight: bold;
+  }
+  .name hr { 
+    margin-left: 2%;
+    
+  }
+  div.content {
+    margin-left: 0%;
+    padding: 1px 16px;
+    height: 85%;
+  }
+  /* Chat containers */
+  .containerr {
+    border: 2px solid #dedede;
+    border-radius: 25px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: left;
+  }
+
+  /* Darker chat container */
+  .darker {
+    border-color: rgb(130, 171, 247);
+    text-align: right;
+  }
+
+  /* Clear floats */
+  .container::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  /* Style images */
+  /* .container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+  } */
+
+  /* Style the right image */
+  /* .container img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right:0;
+  } */
+
+  /* Style time text */
+  .time-right {
+    color: white;
+  }
+
+  /* Style time text */
+  .time-left {
+    color: white;
+  }
+  .createMessage {
+    margin-left: 15%;
+    padding: 5px 16px;
+    border: 2px solid #dedede;
+    background-color: white;
+    width: 75%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .createMessage input {
+      padding: 1% 1%;
+      border-bottom: none;
+  }
+  .createMessage button {
+    background: none;
+  }
 </style>
