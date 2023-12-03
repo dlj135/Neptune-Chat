@@ -41,7 +41,7 @@ const register = () => {
     .then((data) => {
         alert("Successfully Login!")
         console.log("Successfully Login! " + data )
-        router.push('/giveusanA')
+        router.push('/mainpage')
     })
     .catch((error) => {
         console.log(error.code)
@@ -69,7 +69,7 @@ const signInWithGoogle = () => {
         signInWithPopup(getAuth(), provider)
         .then((result) => {
            console.log(result.user);
-           router.push("/giveusanA")
+           router.push("/mainpage")
         }).catch((error) => {
             alert("Something went wrong :/\n" + error.code)
         }); 
