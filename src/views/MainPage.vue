@@ -52,7 +52,7 @@
             </div>
             <div class="createMessage">
                 <input ref="newmessage" type="text" placeholder="Jot something down!">
-                <button v-on:click="getMessage"><i class="fas fa-send"></i></button>
+                <button v-on:click="getMessage"><span class="material-icons">send</span></button>
             </div>
         </div>
     </div>
@@ -145,7 +145,7 @@
         height: 5%;
         width: 90%;
         margin: 10px;
-        margin-left: 45px;
+        margin-left: 85px;
         background-color: rgb(130, 171, 247);
         border-radius: 25px !important;
         border: 3px solid rgb(130, 171, 247);
@@ -251,12 +251,15 @@ div.name {
     padding: 10px;
     margin: 10px 0;
     text-align: left;
+    background-color: rgb(128, 128, 128, 0.2);
   }
 
   /* Darker chat container */
   .darker {
     border-color: rgb(130, 171, 247);
     text-align: right;
+    background-color: rgb(130, 171, 247, 0.2);
+    
   }
 
   /* Clear floats */
@@ -293,18 +296,26 @@ div.name {
   }
   .createMessage {
     margin-left: 15%;
-    padding: 5px 16px;
-    border: 2px solid #dedede;
-    background-color: white;
+    padding: 10px;
+    border: 3px solid #dedede;
+    background-color: #343434;
     width: 75%;
     display: flex;
     justify-content: space-between;
+    border-radius: 10px;
   }
   .createMessage input {
       padding: 1% 1%;
-      border-bottom: none;
+      width: 85%;
+      border-color: black;
+      background-color: gray;
   }
+    .createMessage ::placeholder {
+        color: white;
+        opacity: 1; /* Firefox */
+    }
   .createMessage button {
+    width: 100px;
     background: none;
   }
 </style>
