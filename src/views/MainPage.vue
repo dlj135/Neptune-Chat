@@ -4,7 +4,7 @@
     </head>
     <div class="background">
         <header class="main-header">
-            <img src="/img/default_pfp.jpg" alt="Profile Picture" class="profile-picture">
+            <img id="profilePicture" src="/img/default_pfp.jpg" alt="Profile Picture" class="profile-picture">
 
             <div class="icons">
                 <span class="material-icons">home</span>

@@ -40,7 +40,7 @@
         .then((data) => {
             alert("Successfully registered!")
             console.log("Successfully registered! " + data )
-            router.push('/giveusanA')
+            router.push('/')
         })
         .catch((error) => {
             alert(error.message)
@@ -53,7 +53,7 @@
         signInWithPopup(getAuth(), provider)
         .then((result) => {
            console.log(result.user);
-           router.push("/giveusanA")
+           router.push("/")
         }).catch((error) => {
             alert("Something went wrong :/\n" + error.code)
         }); 
