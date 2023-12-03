@@ -51,8 +51,8 @@
             </div>
             </div>
             <div class="createMessage">
-                <input ref="newmessage" type="text" placeholder="Jot something down!">
-                <button v-on:click="getMessage"><span class="material-icons">send</span></button>
+                <input v-model="newmessage" type="text" placeholder="Jot something down!">
+                <button v-on:click="addMessage"><span class="material-icons">send</span></button>
             </div>
         </div>
     </div>
@@ -65,10 +65,11 @@
 <!-- Bard -->
 <script setup>
     import { onMounted, ref } from "vue";
-    import { getAuth, onAuthStateChanged, signOut } from "@/firebase";
+    import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp } from "@/firebase";
     import { useRouter } from 'vue-router';
     const router = useRouter()
     const isLoggedIn = ref(false);
+    const newmessage = ref('')
 
     let auth;
     onMounted(() => {
@@ -81,7 +82,6 @@
                 isLoggedIn.value = false;
             }
         });
-
     });
     const handleSignOut = () => {
         signOut(auth).then(() => {
@@ -89,25 +89,28 @@
         });
     };
 
-    // Sending a message
     // const messagesCollection =  await getDocs(collection(db, 'Messages'))
-    // messagesCollection.forEach((task) => {
-    //   console.log(task)
-    // });
-    // const user = firebase.auth.currentUser;
-    // if (user !== null) {
-    //   const uid = user.uid;
-    //   console.log(uid);
-    //   const docRef = await addDoc(collection(db, "Messages"), {
-    //     text: 'testing',
-    //     createdAt: serverTimestamp(),
-    //     uid,
-    //   });
-      
-    // }
-    // else{
-    //   console.log('User not found');
-    // }
+        // messagesCollection.forEach((task) => {
+        // console.log(task)
+        // });
+    // Sending a message
+    const addMessage = async () => {
+        const user = auth.currentUser;
+        if (user !== null) {
+            const uid = user.uid;
+            console.log(uid);
+            await addDoc(collection(db, "Messages"), {
+                messageText: newmessage.value,
+                senderId: uid,
+                // SUNCuNADHrMJ8bbWYdKmkRtjcC13 is user: messager1@gmail.com 
+                participants: [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'],
+                createdAt: serverTimestamp(),
+            });
+        }
+        else{
+            console.log('User not found');
+        }
+    };
 
     // // receiving a doc/message
     // const q = query(collection(db, "Messages"), where("uid", "==", 'user.uid'), orderBy("createdAT"), limit(25));
