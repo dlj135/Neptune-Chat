@@ -21,6 +21,8 @@ cd WELOCKEDIN
 npm install
 npm install firebase
 npm install vue-router@4
+npm install vue3-carousel
+npm install bootstrap
 ```
 
 ### Compile and Hot-Reload for Development
