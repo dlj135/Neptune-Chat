@@ -31,15 +31,24 @@ import { createRouter, createWebHistory } from "vue-router";
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: "/", component: () => import("../views/Login.vue") },
+        // public landing page route
+        { path: "/", component: () => import("../views/LandingPage.vue") },
+        
+        // Login route (not protected)
+        { path: "/login", component: () => import("../views/Login.vue") },
+        
+        // Registration route (not protected)
         { path: "/register", component: () => import("../views/Register.vue") },
+        
+        // Protected MainPage route
         { 
-            path: "/giveusanA", 
+            path: "/mainpage", // This path is now protected and only for logged-in users
             component: () => import("../views/MainPage.vue"),
             meta: {
                 requiresAuth: true
             },
         },
+        // ... other routes ...
     ]
 });
 
@@ -49,12 +58,12 @@ const getCurrentUser = () => {
             getAuth(),
             (user) => {
                 removeListener();
-                resolve(user)
+                resolve(user);
             },
             reject
-        )
-    })
-}
+        );
+    });
+};
 
 router.beforeEach(async(to, from, next) => {
     if (to.matched.some((record) => record.meta.requiresAuth)) {
@@ -62,14 +71,14 @@ router.beforeEach(async(to, from, next) => {
             next();
         }
         else {
-            alert("You Must Sign In To View This Page")
-            next("/")
+            alert("You must sign in to view this page.");
+            next("/login"); // Redirect to the login page if not authenticated
         }
     }
-    else{
+    else {
         next();
     }
 });
 
 export default router;
-   
+
