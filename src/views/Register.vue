@@ -53,7 +53,7 @@
         signInWithPopup(getAuth(), provider)
         .then((result) => {
            console.log(result.user);
-           router.push("/login")
+           router.push("/mainpage")
         }).catch((error) => {
             alert("Something went wrong :/\n" + error.code)
         }); 
