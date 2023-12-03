@@ -40,7 +40,7 @@
         .then((data) => {
             alert("Successfully registered!")
             console.log("Successfully registered! " + data )
-            router.push('/')
+            router.push('/login')
         })
         .catch((error) => {
             alert(error.message)
@@ -53,14 +53,14 @@
         signInWithPopup(getAuth(), provider)
         .then((result) => {
            console.log(result.user);
-           router.push("/")
+           router.push("/login")
         }).catch((error) => {
             alert("Something went wrong :/\n" + error.code)
         }); 
 	}
 
     const loginPage = () => {
-    router.push('/')
+    router.push('/login')
     }
 	
 </script>
