@@ -87,39 +87,39 @@
     };
 
     // Sending a message
-    const messagesCollection =  await getDocs(collection(db, 'Messages'))
-    messagesCollection.forEach((task) => {
-      console.log(task)
-    });
-    const user = firebase.auth.currentUser;
-    if (user !== null) {
-      const uid = user.uid;
-      console.log(uid);
-      const docRef = await addDoc(collection(db, "Messages"), {
-        text: 'testing',
-        createdAt: serverTimestamp(),
-        uid,
-      });
+    // const messagesCollection =  await getDocs(collection(db, 'Messages'))
+    // messagesCollection.forEach((task) => {
+    //   console.log(task)
+    // });
+    // const user = firebase.auth.currentUser;
+    // if (user !== null) {
+    //   const uid = user.uid;
+    //   console.log(uid);
+    //   const docRef = await addDoc(collection(db, "Messages"), {
+    //     text: 'testing',
+    //     createdAt: serverTimestamp(),
+    //     uid,
+    //   });
       
-    }
-    else{
-      console.log('User not found');
-    }
+    // }
+    // else{
+    //   console.log('User not found');
+    // }
 
-    // receiving a doc/message
-    const q = query(collection(db, "Messages"), where("uid", "==", 'user.uid'), orderBy("createdAT"), limit(25));
-    onSnapshot(q, (querySnapshot) => {
-      const fbMessage = [];
-      querySnapshot.forEach((doc) => {
-        const message = {
-          senderID: doc.uid,
-          content: doc.data().text,
-          sentAt: doc.data().createdAT,
-        }
-        fbMessage.push(message)
-      });
-      messages.value = fbMessage
-    });
+    // // receiving a doc/message
+    // const q = query(collection(db, "Messages"), where("uid", "==", 'user.uid'), orderBy("createdAT"), limit(25));
+    // onSnapshot(q, (querySnapshot) => {
+    //   const fbMessage = [];
+    //   querySnapshot.forEach((doc) => {
+    //     const message = {
+    //       senderID: doc.uid,
+    //       content: doc.data().text,
+    //       sentAt: doc.data().createdAT,
+    //     }
+    //     fbMessage.push(message)
+    //   });
+    //   messages.value = fbMessage
+    // });
 </script>
 
 <style>
