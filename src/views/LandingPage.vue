@@ -135,7 +135,7 @@ export default {
     overflow:auto;
     
     /* Background styling */
-    background-image: url('/public/img/Homepage_background.jpg'); /* You can use a color, gradient, or image */
+    background-image: url('/img/Homepage_background.jpg'); /* You can use a color, gradient, or image */
     background-size: cover; /* Ensure the background covers the entire area */
     background-position: center; /* Center the background */
     /* Optionally, you can add more styling for the content within this div */
