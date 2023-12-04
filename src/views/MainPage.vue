@@ -30,25 +30,25 @@
             <h5>Dillon Jacques</h5>
             <hr>
             <div class="content">
-            <div class="containerr">
-                <p>Hello. How are you today?</p>
-                <span class="time-right">11:00</span>
-            </div>
+                <div class="containerr" v-for="(message, index) in receiver" :key="index">
+                    <p>{{ message.messageText }}</p>
+                    <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                </div>
 
-            <div class="containerr darker">
-                <p>Hey! I'm fine. Thanks for asking!</p>
-                <span class="time-left">11:01</span>
-            </div>
+                <div class="containerr darker">
+                    <p>Hey! I'm fine. Thanks for asking!</p>
+                    <span class="time-left">11:01</span>
+                </div>
 
-            <div class="containerr">
-                <p>Sweet! So, what do you wanna do today?</p>
-                <span class="time-right">11:02</span>
-            </div>
+                <div class="containerr">
+                    <p>Sweet! So, what do you wanna do today?</p>
+                    <span class="time-right">11:02</span>
+                </div>
 
-            <div class="containerr darker">
-                <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-                <span class="time-left">11:05</span>
-            </div>
+                <div class="containerr darker">
+                    <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
+                    <span class="time-left">11:05</span>
+                </div>
             </div>
             <div class="createMessage">
                 <input v-model="newmessage" type="text" placeholder="Jot something down!">
@@ -65,7 +65,7 @@
 <!-- Bard -->
 <script setup>
     import { onMounted, ref } from "vue";
-    import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp } from "@/firebase";
+    import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp, query, where, orderBy, limit, onSnapshot } from "@/firebase";
     import { useRouter } from 'vue-router';
     // this routes the page back to login if the user signs out
     const router = useRouter()
@@ -77,6 +77,9 @@
     //this handles the log out button and allows the user to stay signed
     // even with a refresh
     let auth;
+    let user;
+    let uid;
+    let receiver;
     onMounted(() => {
         auth = getAuth();
         onAuthStateChanged(auth, (user) => {
@@ -86,6 +89,20 @@
             else{
                 isLoggedIn.value = false;
             }
+        });
+
+        user = auth.currentUser;
+        uid = user.uid;
+        receiver = ref([]);
+        const q = query(collection(db, "Messages"), where("participants", "==", ['SUNCuNADHrMJ8bbWYdKmkRtjcC13', uid]));
+        onSnapshot(q, (querySnapshot) => {
+            const fbMessage = [];
+            querySnapshot.forEach((doc) => {
+                console.log(doc.data().messageText)
+                fbMessage.push(doc.data())
+            });
+            console.log(q)
+            receiver.value = fbMessage
         });
     });
     // this is the google signout function
@@ -121,19 +138,7 @@
     };
 
     // // receiving a doc/message
-    // const q = query(collection(db, "Messages"), where("uid", "==", 'user.uid'), orderBy("createdAT"), limit(25));
-    // onSnapshot(q, (querySnapshot) => {
-    //   const fbMessage = [];
-    //   querySnapshot.forEach((doc) => {
-    //     const message = {
-    //       senderID: doc.uid,
-    //       content: doc.data().text,
-    //       sentAt: doc.data().createdAT,
-    //     }
-    //     fbMessage.push(message)
-    //   });
-    //   messages.value = fbMessage
-    // });
+    
 </script>
 
 <!-- Page styles -->
