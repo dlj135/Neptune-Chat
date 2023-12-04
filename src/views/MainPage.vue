@@ -30,12 +30,12 @@
             <h5>Dillon Jacques</h5>
             <hr>
             <div class="content">
-                <div class="containerr" v-for="(message, index) in receive" :key="index">
+                <div class="containerr" v-for="(message) in receive" :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
                 </div>
 
-                <div class="containerr darker" v-for="(message, index) in history" :key="index">
+                <div class="containerr darker" v-for="(message) in history" :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
                 </div>
@@ -51,7 +51,7 @@
                 </div> -->
             </div>
             <div class="createMessage">
-                <input v-model="newmessage" type="text" placeholder="Jot something down!">
+                <input v-model="newmessage" @keyup.enter="addMessage" type="text" placeholder="Jot something down!">
                 <button v-on:click="addMessage"><span class="material-icons">send</span></button>
             </div>
         </div>
@@ -94,32 +94,44 @@
 
         user = auth.currentUser;
         uid = user.uid;
-
+        const combinedIds = [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'].sort().join('_')
         //this is how we receive from the other user messages 
         receive = ref([]);
-        const q = await query(collection(db, "Messages"), where("participants", "==", ['SUNCuNADHrMJ8bbWYdKmkRtjcC13', uid]), orderBy("createdAt"));
+        history = ref([]);
+
+        const q = await query(collection(db, "Messages"), where("participantsIds", "==", combinedIds), orderBy("createdAt"));
         onSnapshot(q, (querySnapshot) => {
-            const fbMessage = [];
+            const user1messages = [];
+            const user2messages = [];
             querySnapshot.forEach((doc) => {
-                console.log(doc.data().messageText)
-                fbMessage.push(doc.data())
+                
+                console.log(doc.data().senderId + "\nHopefully this returns what I think it returns")
+                if(doc.data().senderId == uid){
+                    console.log(doc.data().messageText)
+                    user2messages.push(doc.data())
+                }
+                else{
+                    console.log(doc.data().messageText)
+                    user1messages.push(doc.data())
+                }
+                
             });
-            console.log(q)
-            receive.value = fbMessage
+            receive.value = user1messages
+            history.value = user2messages
         });
 
         //this is how we receive THIS USER sent messages 
-        history = ref([]);
-        const p =  await query(collection(db, "Messages"), where("participants", "==", [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13']), orderBy("createdAt"));
-        onSnapshot(p, (querySnapshot) => {
-            const fbMessage = [];
-            querySnapshot.forEach((doc) => {
-                console.log(doc.data().messageText)
-                fbMessage.push(doc.data())
-            });
-            console.log(q)
-            history.value = fbMessage
-        });
+        
+        // const p =  await query(collection(db, "Messages"), where("participants", "==", [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13']), orderBy("createdAt"));
+        // onSnapshot(p, (querySnapshot) => {
+        //     const fbMessage = [];
+        //     querySnapshot.forEach((doc) => {
+        //         console.log(doc.data().messageText)
+        //         fbMessage.push(doc.data())
+        //     });
+        //     console.log(q)
+            
+        // });
     });
     // this is the google signout function
     const handleSignOut = () => {
@@ -144,7 +156,7 @@
                 senderId: uid,
                 // SUNCuNADHrMJ8bbWYdKmkRtjcC13 is user: messager1@gmail.com 
                 // still need to work on how the user can choose who to send to
-                participants: [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'],
+                participantsIds: [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'].sort().join('_'),
                 createdAt: serverTimestamp(),
             });
         }
