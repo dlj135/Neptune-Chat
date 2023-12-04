@@ -5,54 +5,45 @@
     <div class="background">
         <header class="main-header">
             <img id="profilePicture" src="/img/default_pfp.jpg" alt="Profile Picture" class="profile-picture">
-
             <div class="icons">
                 <span class="material-icons">home</span>
                 <span class="material-icons">import_contacts</span>
                 <span class="material-icons">chat</span>
             </div>
-
-            <input type="text" placeholder="Search" class="search-bar">
-
+            <div class="search-container">
+                <input v-model="searchInput" type="text" placeholder="Search for a user...">
+                <div class="search-results">
+                    <ul v-if="searchResults.length">
+                        <li v-for="result in searchResults" :key="result.uid" @click="addUserToSidebar(result)">
+                            {{ result.alias }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <button type="button" @click="handleSignOut" v-if="isLoggedIn" class="logout-button">Logout</button>
         </header>
 
         <div class="sidebar">
             <h5>Direct Messages</h5>
-            <hr>
-            <a class="active">Dillon Jacques</a>
-            <a>Joshua Hammond</a>
-            <a>Tre Cobb</a>
-            <a>Kalup Cook</a>
+            <hr />
+            <a v-for="user in sidebarUsers" :key="user.uid" @click="selectUserInSidebar(user)">
+                {{ user.alias }}
+            </a>
         </div>
 
         <div class="name">
-            <h5>Dillon Jacques</h5>
+            <h5>{{ selectedUserAlias }}</h5>
             <hr>
             <div class="content">
-                <!-- <div v-for="(message) in [receive, history].sort((a, b) => a.createdAt.toDate().toLocaleTimeString() - b.createdAt.toDate().toLocaleTimeString())"  :class="{'containerr': message.senderId !== uid, 'containerr darker': message.senderId === uid}">
-                    <p>{{ message.messageText }}</p>
-                    <p>{{ message.createdAt.toDate().toLocaleTimeString() }}</p>
-                </div> -->
                 <div class="containerr" v-for="(message) in receive" :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
                 </div>
-
-                <div class="containerr darker" v-for="(message) in history" :key="message.createdAt.toDate().toLocaleTimeString()">
+                <div class="containerr darker" v-for="(message) in history"
+                    :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
                 </div>
-
-                <!-- <div class="containerr">
-                    <p>Sweet! So, what do you wanna do today?</p>
-                    <span class="time-right">11:02</span>
-                </div>
-
-                <div class="containerr darker">
-                    <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-                    <span class="time-left">11:05</span>
-                </div> -->
             </div>
             <div class="createMessage">
                 <input v-model="newmessage" @keyup.enter="addMessage" type="text" placeholder="Jot something down!">
@@ -60,216 +51,263 @@
             </div>
         </div>
     </div>
-    
 </template>
+  
+<script>
+import { onMounted, ref, watchEffect } from "vue";
+import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp, query, where, orderBy, limit, onSnapshot } from "@/firebase";
+import { useRouter } from 'vue-router';
 
+export default {
+    setup() {
+        const router = useRouter();
+        const isLoggedIn = ref(false);
+        const newmessage = ref('');
+        const userAliases = ref([]);
+        const selectedUserAlias = ref(null);
+        const searchInput = ref('');
+        const searchResults = ref([]);
+        let auth;
+        let user;
+        let uid;
+        let selectedUserUid = ref(null);
+        let receive = ref([]);
+        let history = ref([]);
+        const sidebarUsers = ref([]);
 
-
-<!-- If you prefer a more concise and reactive syntax, <script setup> is the recommended choice -->
-<!-- Bard -->
-<script setup>
-    import { onMounted, ref } from "vue";
-    import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp, query, where, orderBy, limit, onSnapshot } from "@/firebase";
-    import { useRouter } from 'vue-router';
-    // this routes the page back to login if the user signs out
-    const router = useRouter()
-    // this is the login flag
-    const isLoggedIn = ref(false);
-    // this takes user input from the text box
-    const newmessage = ref('')
-
-    //this handles the log out button and allows the user to stay signed
-    // even with a refresh
-    let auth;
-    let user;
-    let uid;
-    let receive;
-    let history;
-    onMounted(async () => {
-        auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                isLoggedIn.value = true;
-            }
-            else{
-                isLoggedIn.value = false;
-            }
-        });
-
-        user = auth.currentUser;
-        uid = user.uid;
-        const combinedIds = [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'].sort().join('_')
-        //this is how we receive from the other user messages 
-        receive = ref([]);
-        history = ref([]);
-
-        const q = await query(collection(db, "Messages"), where("participantsIds", "==", combinedIds), orderBy("createdAt"));
-        onSnapshot(q, (querySnapshot) => {
-            const user1messages = [];
-            const user2messages = [];
-            querySnapshot.forEach((doc) => {
-                
-                console.log(doc.data().senderId + "\nHopefully this returns what I think it returns")
-                if(doc.data().senderId == uid){
-                    console.log(doc.data().messageText)
-                    user2messages.push(doc.data())
+        onMounted(async () => {
+            auth = getAuth();
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    isLoggedIn.value = true;
+                } else {
+                    isLoggedIn.value = false;
                 }
-                else{
-                    console.log(doc.data().messageText)
-                    user1messages.push(doc.data())
+            });
+
+            user = auth.currentUser;
+            uid = user.uid;
+
+            // Fetch user aliases from the Usernames collection
+            await fetchUserAliases();
+
+            // Set the initial selected user
+            await selectUser(userAliases.value[0]);
+        });
+
+        const fetchUserAliases = async () => {
+            const usernamesQuery = await getDocs(collection(db, "Usernames"));
+            userAliases.value = usernamesQuery.docs.map(doc => doc.data().alias);
+        };
+
+        const selectUser = async (alias) => {
+            selectedUserAlias.value = alias;
+
+            // Fetch UID based on alias from the Usernames collection
+            const usernamesQuery = await query(collection(db, "Usernames"), where("alias", "==", alias), limit(1));
+            const usernamesSnapshot = await getDocs(usernamesQuery);
+
+            if (!usernamesSnapshot.empty) {
+                const userDocument = usernamesSnapshot.docs[0];
+                selectedUserUid.value = userDocument.data().uid;
+            }
+
+            fetchMessages();
+        };
+
+        const fetchMessages = async () => {
+            if (selectedUserUid.value) {
+                const combinedIds = [uid, selectedUserUid.value].sort().join('_');
+                const q = await query(collection(db, "Messages"), where("participantsIds", "==", combinedIds), orderBy("createdAt"));
+                onSnapshot(q, (querySnapshot) => {
+                    const user1messages = [];
+                    const user2messages = [];
+                    querySnapshot.forEach((doc) => {
+                        if (doc.data().senderId == uid) {
+                            user2messages.push(doc.data());
+                        } else {
+                            user1messages.push(doc.data());
+                        }
+                    });
+                    receive.value = user1messages;
+                    history.value = user2messages;
+                });
+            }
+        };
+
+        const handleSignOut = () => {
+            signOut(auth).then(() => {
+                router.push('/');
+            });
+        };
+
+        const addMessage = async () => {
+            if (selectedUserUid.value) {
+                const user = auth.currentUser;
+                if (user !== null) {
+                    const uid = user.uid;
+                    await addDoc(collection(db, "Messages"), {
+                        messageText: newmessage.value,
+                        senderId: uid,
+                        participantsIds: [uid, selectedUserUid.value].sort().join('_'),
+                        createdAt: serverTimestamp(),
+                    });
                 }
-                
-            });
-            receive.value = user1messages
-            history.value = user2messages
+            } else {
+                console.log('No user selected');
+            }
+        };
+
+        const addUserToSidebar = (userAlias) => {
+            // Add the selected user alias to the sidebar
+            if (!sidebarUsers.value.some(user => user.uid === userAlias.uid)) {
+                sidebarUsers.value.push({ uid: userAlias.uid, alias: userAlias.alias });
+                // Clear the search input
+                searchInput.value = '';
+                // Close the search results
+                searchResults.value = [];
+            }
+        };
+
+        const selectUserInSidebar = async (user) => {
+            // Select the user in the sidebar and update the UID
+            selectedUserUid.value = user.uid;
+            selectedUserAlias.value = user.alias;
+
+            // Fetch messages for the selected user
+            fetchMessages();
+        };
+
+        // Watch for changes in the search input and update search results
+        watchEffect(async () => {
+            if (searchInput.value.trim() === '') {
+                searchResults.value = [];
+            } else {
+                const usernamesQuery = await query(collection(db, "Usernames"), where("alias", ">=", searchInput.value.toLowerCase()), where("alias", "<=", searchInput.value.toLowerCase() + "\uf8ff"));
+                const usernamesSnapshot = await getDocs(usernamesQuery);
+                searchResults.value = usernamesSnapshot.docs.map(doc => ({ uid: doc.data().uid, alias: doc.data().alias }));
+            }
         });
 
-        //this is how we receive THIS USER sent messages 
-        
-        // const p =  await query(collection(db, "Messages"), where("participants", "==", [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13']), orderBy("createdAt"));
-        // onSnapshot(p, (querySnapshot) => {
-        //     const fbMessage = [];
-        //     querySnapshot.forEach((doc) => {
-        //         console.log(doc.data().messageText)
-        //         fbMessage.push(doc.data())
-        //     });
-        //     console.log(q)
-            
-        // });
-    });
-    // this is the google signout function
-    const handleSignOut = () => {
-        signOut(auth).then(() => {
-            router.push('/')
-        });
-    };
-
-    // const messagesCollection =  await getDocs(collection(db, 'Messages'))
-        // messagesCollection.forEach((task) => {
-        // console.log(task)
-        // });
-
-    // Sending a message to the db
-    const addMessage = async () => {
-        const user = auth.currentUser;
-        if (user !== null) {
-            const uid = user.uid;
-            console.log(uid);
-            await addDoc(collection(db, "Messages"), {
-                messageText: newmessage.value,
-                senderId: uid,
-                // SUNCuNADHrMJ8bbWYdKmkRtjcC13 is user: messager1@gmail.com 
-                // still need to work on how the user can choose who to send to
-                participantsIds: [uid, 'SUNCuNADHrMJ8bbWYdKmkRtjcC13'].sort().join('_'),
-                createdAt: serverTimestamp(),
-            });
-        }
-        else{
-            console.log('User not found');
-        }
-    };
-
-    // // receiving a doc/message
-    
+        return {
+            isLoggedIn,
+            newmessage,
+            userAliases,
+            selectedUserAlias,
+            searchInput,
+            searchResults,
+            receive,
+            history,
+            handleSignOut,
+            addMessage,
+            addUserToSidebar,
+            sidebarUsers,
+            selectUserInSidebar,
+        };
+    },
+};
 </script>
 
-<!-- Page styles -->
+
+
+
+
+
+
 <style>
-    .background{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        overflow: auto;
-        background-image: url('/img/login_register_background.jpg');
-        background-size: cover;
-        background-position: center;
-        
-    }
-    header{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 5%;
-        width: 90%;
-        margin: 10px;
-        margin-left: 85px;
-        background-color: rgb(130, 171, 247);
-        border-radius: 25px !important;
-        border: 3px solid rgb(130, 171, 247);
-    }
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-image: url('/img/login_register_background.jpg');
+    background-size: cover;
+    background-position: center;
+}
 
-    .profile-picture {
-        display: inline-block;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        background-color: #ccc;
-        margin-left: 25px;
-    }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 5%;
+    width: 90%;
+    margin: 10px;
+    margin-left: 85px;
+    background-color: rgb(130, 171, 247);
+    border-radius: 25px !important;
+    border: 3px solid rgb(130, 171, 247);
+}
 
-    .icons {
-        display: flex;
-        margin-right: 20px;
-        width: 75px;
-        
-    }
-    .icons span{
-        padding-right: 30px;
-    }
-    .logout-button {
-        padding: 5px 10px;
-        margin-right: 25px;
-        border: 2px solid rgb(130, 171, 247);
-        border-radius: 5px;
-        background-color: black;
-        color: #fff;
-        cursor: pointer;
-    }
+.profile-picture {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin-left: 25px;
+}
 
+.icons {
+    display: flex;
+    margin-right: 20px;
+    width: 75px;
+}
 
-    /* sidebar */
-    .sidebar {
-        margin: 0;
-        padding: 0;
-        width: 15%;
-        background-color: #343434;
-        position: absolute;
-        left: 10px;
-        height: 85%;
-        border-radius: 25px;
-        border: 1px solid rgb(130, 171, 247);
-    }
+.icons span {
+    padding-right: 30px;
+}
 
-    .sidebar h5 {
-        margin: 10%;
-        font-weight: bold;
-        color: white;
-    }
+.logout-button {
+    padding: 5px 10px;
+    margin-right: 25px;
+    border: 2px solid rgb(130, 171, 247);
+    border-radius: 5px;
+    background-color: black;
+    color: #fff;
+    cursor: pointer;
+}
 
-    .sidebar hr {
-        color: rgb(130, 171, 247);
-    }
+/* sidebar */
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 15%;
+    background-color: #343434;
+    position: absolute;
+    left: 10px;
+    height: 85%;
+    border-radius: 25px;
+    border: 1px solid rgb(130, 171, 247);
+}
 
-    .sidebar a {
-        display: block;
-        color: white !important;
-        padding: 16px;
-        text-decoration: none;
-    }
-        
-    .sidebar a.active {
-        background-color: rgb(130, 171, 247);
-    }
+.sidebar h5 {
+    margin: 10%;
+    font-weight: bold;
+    color: white;
+}
 
-    .sidebar a:hover:not(.active) {
-        background-color: #a9569c;
-        
-    }
-    
+.sidebar hr {
+    color: rgb(130, 171, 247);
+}
 
-    /* Middle of the page */
+.sidebar a {
+    display: block;
+    color: white !important;
+    padding: 16px;
+    text-decoration: none;
+}
+
+.sidebar a.active {
+    background-color: rgb(130, 171, 247);
+}
+
+.sidebar a:hover:not(.active) {
+    background-color: #a9569c;
+}
+
+/* Middle of the page */
 div.name {
     margin: 0;
     padding: 0;
@@ -278,72 +316,75 @@ div.name {
     position: absolute;
     right: 7%;
     color: white;
-  }
-  .name h5 {
+}
+
+.name h5 {
     margin: 2%;
     text-align: left;
     font-weight: bold;
-  }
-  .name hr { 
+}
+
+.name hr {
     margin-left: 2%;
-    
-  }
-  div.content {
+}
+
+div.content {
     margin-left: 0%;
     padding: 1px 16px;
     height: 85%;
-  }
-  /* Chat containers */
-  .containerr {
+}
+
+/* Chat containers */
+.containerr {
     border: 2px solid #dedede;
     border-radius: 25px;
     padding: 10px;
     margin: 10px 0;
     text-align: left;
     background-color: rgb(128, 128, 128, 0.2);
-  }
+}
 
-  /* Darker chat container */
-  .darker {
+/* Darker chat container */
+.darker {
     border-color: rgb(130, 171, 247);
     text-align: right;
     background-color: rgb(130, 171, 247, 0.2);
-    
-  }
+}
 
-  /* Clear floats */
-  .container::after {
+/* Clear floats */
+.container::after {
     content: "";
     clear: both;
     display: table;
-  }
+}
 
-  /* Style images */
-  /* .container img {
-    float: left;
-    max-width: 60px;
-    width: 100%;
-    margin-right: 20px;
-    border-radius: 50%;
-  } */
+/* Style images */
+/* .container img {
+  float: left;
+  max-width: 60px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+} */
 
-  /* Style the right image */
-  /* .container img.right {
-    float: right;
-    margin-left: 20px;
-    margin-right:0;
-  } */
+/* Style the right image */
+/* .container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right:0;
+} */
 
-  /* Style time text */
-  .time-right {
+/* Style time text */
+.time-right {
     color: white;
-  }
+}
 
-  /* Style time text */
-  .time-left {
+/* Style time text */
+.time-left {
     color: white;
-  }
-  .createMessage {
+}
+
+.createMessage {
     margin-left: 15%;
     padding: 10px;
     border: 3px solid #dedede;
@@ -352,19 +393,50 @@ div.name {
     display: flex;
     justify-content: space-between;
     border-radius: 10px;
-  }
-  .createMessage input {
-      padding: 1% 1%;
-      width: 85%;
-      border-color: black;
-      background-color: gray;
-  }
-    .createMessage ::placeholder {
-        color: white;
-        opacity: 1; /* Firefox */
-    }
-  .createMessage button {
+}
+
+.createMessage input {
+    padding: 1% 1%;
+    width: 85%;
+    border-color: black;
+    background-color: gray;
+}
+
+.createMessage ::placeholder {
+    color: white;
+    opacity: 1;
+    /* Firefox */
+}
+
+.createMessage button {
     width: 100px;
     background: none;
-  }
+}
+
+/* Search container and results */
+.search-container {
+    position: relative;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    width: 100%;
+}
+
+.search-results ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-results li {
+    padding: 10px;
+    cursor: pointer;
+}
 </style>
