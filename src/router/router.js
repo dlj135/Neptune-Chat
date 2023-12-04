@@ -40,6 +40,8 @@ const router = createRouter({
         // Registration route (not protected)
         { path: "/register", component: () => import("../views/Register.vue") },
         
+        { path: "/enter-username", component: () => import("../views/Alias.vue") },
+
         // Protected MainPage route
         { 
             path: "/mainpage", // This path is now protected and only for logged-in users

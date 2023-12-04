@@ -27,7 +27,7 @@
 
     <!--Text below image-->
     <div class="bg-transparent mt-1">
-      <h1 style="font-family: Arial; font-size: 32px; color: #007bff;">Introducing Neptune</h1>
+      <h1 style="font-family: Arial; font-size: 32px; color: whitesmoke;">Introducing Neptune</h1>
       <p style="font-family: Verdana; font-size: 16px; color: whitesmoke;">A cutting edge messenging app with cybersecurity and user modularity at the front of its design philosophy.</p>
     </div>
 

@@ -1,145 +1,166 @@
 <template>
-    <div class="regGen">
-        
-        <div>
-            <form class="register">
-            <h2>Login</h2>
-            <input 
-                type="email" 
-                placeholder="Email address"
-                v-model="email" />
-            <input 
-                type="password" 
-                placeholder="Password" 
-                v-model="password" />
-            <div v-if="errMsg" class="error">{{ errMsg }}</div>
-            <div class="space"></div>
-            <div>
-                <button type="button" @click="register">Submit</button>
-                <button type="button" @click="signInWithGoogle">Sign In With Google</button>
-                <button type="button" @click="registrationPage">Not Registered?</button>
-            </div>
-            
-            
-            </form>
-        </div>
-        
+    <div class="login-container">
+      <div>
+        <form class="login-form">
+          <h2>Login</h2>
+          <div class="form-group">
+            <label for="email">Email address:</label>
+            <input type="email" id="email" v-model="email" placeholder="Enter your email" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" v-model="password" placeholder="Enter your password" />
+          </div>
+          <div v-if="errMsg" class="error">{{ errMsg }}</div>
+          <div class="space"></div>
+          <div class="buttons">
+            <button type="button" @click="login">Login</button>
+            <button type="button" @click="signInWithGoogle">Sign In With Google</button>
+            <button type="button" @click="registrationPage">Not Registered?</button>
+          </div>
+        </form>
+      </div>
     </div>
-</template>
-
-<script setup>
-import { ref } from 'vue'
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "@/firebase"
-import { useRouter } from 'vue-router';
-const email = ref("");
-const password = ref("");
-const errMsg = ref("")
-const router = useRouter()
-
-const register = () => {
+  </template>
+  
+  <script setup>
+  import { ref } from 'vue';
+  import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "@/firebase";
+  import { useRouter } from 'vue-router';
+  
+  const email = ref("");
+  const password = ref("");
+  const errMsg = ref("");
+  const router = useRouter();
+  
+  const login = () => {
     signInWithEmailAndPassword(getAuth(), email.value, password.value)
-    .then((data) => {
-        alert("Successfully Login!")
-        console.log("Successfully Login! " + data )
-        router.push('/mainpage')
-    })
-    .catch((error) => {
-        console.log(error.code)
-        switch (error.code){
-            case "auth/invalid-email":
-                errMsg.value = "Invalid email";
-                break;
-            case "auth/user-not-found":
-                errMsg.value = "No account with that email was found";
-                break;
-            case "auth/invalid-credential":
-                errMsg.value = "Incorrect password";
-                break;
-            case "auth/missing-password":
-                errMsg.value = "Where's your password lil guy";
-                break;
-            default:
-                errMsg.value = "Email or password was incorrect";
-                break;
+      .then((data) => {
+        alert("Successfully logged in!");
+        console.log("Successfully logged in! " + data);
+        router.push('/mainpage');
+      })
+      .catch((error) => {
+        console.log(error.code);
+        switch (error.code) {
+          case "auth/invalid-email":
+            errMsg.value = "Invalid email";
+            break;
+          case "auth/user-not-found":
+            errMsg.value = "No account with that email was found";
+            break;
+          case "auth/invalid-credential":
+            errMsg.value = "Incorrect password";
+            break;
+          case "auth/missing-password":
+            errMsg.value = "Where's your password lil guy";
+            break;
+          default:
+            errMsg.value = "Email or password was incorrect";
+            break;
         }
-    })
-}
-const signInWithGoogle = () => {
-		const provider = new GoogleAuthProvider();
-        signInWithPopup(getAuth(), provider)
-        .then((result) => {
-           console.log(result.user);
-           router.push("/mainpage")
-        }).catch((error) => {
-            alert("Something went wrong :/\n" + error.code)
-        }); 
-}
-
-const registrationPage = () => {
-    router.push('/register')
-}
-
-</script>
-
-<style>
-.regGen{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
+      });
+  };
+  
+  const signInWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(getAuth(), provider)
+      .then((result) => {
+        console.log(result.user);
+        router.push("/mainpage");
+      })
+      .catch((error) => {
+        alert("Something went wrong :/\n" + error.code);
+      });
+  };
+  
+  const registrationPage = () => {
+    router.push('/register');
+  };
+  
+  </script>
+  
+  <style scoped>
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    overflow: auto;
-    background-image: url('/img/login_register_background.jpg');
     background-size: cover;
     background-position: center;
     color: white;
-}
+    background-image: url('/img/login_register_background.jpg');
 
-.register {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 400px;
-    width: 400px; /* Adjust width as needed */
-    background-color: black;
-    padding: 20px;
+  }
+  
+  .login-form {
+    background-color: #fff;
+    padding: 30px;
     border-radius: 10px;
-}
-
-.register h2 {
-    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
     text-align: center;
-    margin-bottom: 10%;
-}
+    background-image: url('/img/login_register_background.jpg');
 
-.register input {
-    width: 50%;
+  }
+  
+  h2 {
+    color: rgb(249, 247, 248);
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: block;
+    color: #f8f5f5;
+  }
+  
+  input {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    margin-left: 25%;
-    margin-bottom: 10px;
-    border-radius: 10px;
-}
-
-.register button {
-    display: block;
-    padding: 10px 6px;
-    width: 50%;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  button {
+    padding: 10px;
+    width: 48%;
     background-color: #007bff;
     color: white;
     border: none;
     cursor: pointer;
-    margin-top: 10px;
-    margin-left: 25%;
-    border-radius: 25px;
-}
-.space{
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .space {
     margin-bottom: 20%;
-}
-.error{
+  }
+  
+  .error {
     color: red;
     text-align: center;
-}
-
-</style>
+  }
+  
+  </style>
+  
