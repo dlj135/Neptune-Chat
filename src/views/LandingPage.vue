@@ -7,7 +7,6 @@
 
      <!-- Log In Button -->
      <div class="login-button-container">
-      <button @click="handleLoginClick">Log In</button>
     </div>
 
     <!-- Text below image -->
@@ -47,7 +46,7 @@
         </div>
         <div class="col-md-6" style="border: 2px solid #007bff; border-radius: 10px;">
           <div class="paragraph-box" style="background-color: black; color: white; padding: 20px;">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut perspiciatis unde omnis iste natus error sit voluptatum accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+            <p>Neptune is a real-time messaging service that allows users to communicate securely on the internet. Our goal is to give our users a space in which they can feel safe and secure with their data in transit. Neptune was created by four cybersecurity students from Florida Southern College.</p>
           </div>
         </div>
       </div>
@@ -60,7 +59,6 @@
 <script>
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
-import Modal from 'bootstrap/js/dist/modal';
 
 export default {
   name: 'LandingPage',
@@ -91,8 +89,8 @@ export default {
     return {
       images: [
         { src: '/img/Slide1.jpg', title: 'Big News!!', description: 'Neptune has finally launched' },
-        { src: '/img/Slide2.jpg', title: 'Image Title 2', description: 'Image description 2' },
-        { src: '/img/Slide3.jpg', title: 'Image Title 3', description: 'Image description 3' },
+        { src: '/img/Slide2.jpg', title: 'Neptune Secure', description: 'Now with realtime messaging functionality!' },
+        { src: '/img/Slide3.jpg', title: 'A Secure Conversational Resource', description: 'With over 4 users, Neptune is leading source for secure messaging.' },
       ],
       cards: [
 

@@ -16,8 +16,10 @@
           <div class="buttons">
             <button type="button" @click="login">Login</button>
             <button type="button" @click="signInWithGoogle">Sign In With Google</button>
-            <button type="button" @click="registrationPage">Not Registered?</button>
           </div>
+        <div class="register-link">
+          Don't Have an Account? <button type="button" @click="registrationPage">Sign Up</button>
+        </div>
         </form>
       </div>
     </div>
@@ -90,7 +92,6 @@
     background-position: center;
     color: white;
     background-image: url('/img/login_register_background.jpg');
-
   }
   
   .login-form {
@@ -127,6 +128,7 @@
   
   input {
     width: 100%;
+    margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -141,7 +143,7 @@
   button {
     padding: 10px;
     width: 48%;
-    background-color: #007bff;
+    background-color: #515356;
     color: white;
     border: none;
     cursor: pointer;
@@ -150,7 +152,7 @@
   }
   
   button:hover {
-    background-color: #0056b3;
+    background-color: #3b3c3d;
   }
   
   .space {
@@ -160,6 +162,27 @@
   .error {
     color: red;
     text-align: center;
+  }
+
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #f5f2f2;
+  }
+  
+  .register-link button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .register-link button:hover {
+    text-decoration: underline;
   }
   
   </style>

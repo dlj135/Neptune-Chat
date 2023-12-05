@@ -141,7 +141,7 @@
   button {
     padding: 10px;
     width: 48%;
-    background-color: #007bff;
+    background-color: #515356;
     color: white;
     border: none;
     cursor: pointer;
@@ -150,7 +150,7 @@
   }
   
   button:hover {
-    background-color: #0056b3;
+    background-color: #343535;
   }
   
   .error {
@@ -163,7 +163,7 @@
     text-align: center;
     margin-top: 20px;
     font-size: 14px;
-    color: #333;
+    color: #f5f2f2;
   }
   
   .login-link button {
