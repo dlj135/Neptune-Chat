@@ -35,6 +35,10 @@
             <h5>{{ selectedUserAlias }}</h5>
             <hr>
             <div class="content">
+                <!-- <div v-for="(message) in [receive, history].sort((a, b) => a.createdAt.toDate().toLocaleTimeString() - b.createdAt.toDate().toLocaleTimeString())"  :class="{'containerr': message.senderId !== uid, 'containerr darker': message.senderId === uid}">
+                    <p>{{ message.messageText }}</p>
+                    <p>{{ message.createdAt.toDate().toLocaleTimeString() }}</p>
+                </div> -->
                 <div class="containerr" v-for="(message) in receive" :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
