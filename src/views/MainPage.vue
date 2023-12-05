@@ -146,6 +146,9 @@ export default {
         };
 
         const addMessage = async () => {
+            if (newmessage.value === ""){
+                return;
+            }
             if (selectedUserUid.value) {
                 const user = auth.currentUser;
                 if (user !== null) {
@@ -156,6 +159,7 @@ export default {
                         participantsIds: [uid, selectedUserUid.value].sort().join('_'),
                         createdAt: serverTimestamp(),
                     });
+                    newmessage.value = '';
                 }
             } else {
                 console.log('No user selected');
@@ -313,30 +317,35 @@ header {
 
 /* Middle of the page */
 div.name {
-    margin: 0;
-    padding: 0;
-    width: 75%;
-    height: 78%;
-    position: absolute;
-    right: 7%;
+    display: flex;
+    flex-direction: column;
+    height: 85vh;
     color: white;
+    margin-left: 18%;
 }
 
 .name h5 {
-    margin: 2%;
+    margin-top: 2%;
+    margin-left: 2%;
+    margin-bottom: 1%;
+    line-height: 20px;
     text-align: left;
     font-weight: bold;
+    font-size: 2rem;
 }
 
 .name hr {
     margin-left: 2%;
+    width: 85%;
 }
 
 div.content {
+    flex: 1;
     margin-bottom: 1%;
     margin-left: 0%;
     padding: 1px 16px;
     max-height: 85%; /* Set a maximum height for scrolling */
+    width: 85%;
     overflow-y: auto;
 }
 
@@ -391,7 +400,7 @@ div.content {
 }
 
 .createMessage {
-    margin-left: 15%;
+    margin-left: 5%;
     padding: 10px;
     border: 3px solid #dedede;
     background-color: #343434;
@@ -399,6 +408,7 @@ div.content {
     display: flex;
     justify-content: space-between;
     border-radius: 10px;
+    margin-top: auto;
 }
 
 .createMessage input {
