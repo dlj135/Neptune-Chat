@@ -1,35 +1,19 @@
 <template>
-  <!--Background-->
   <div class="full-screen-background">
-
-  <!--Legal Model-->
-  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" data-bs-backdrop="false">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="myModalLabel">Legal Information</h5>
-        </div>
-        <div class="modal-body">
-          <p>Various graphic assets taken from <a href="https://www.freepik.com/free-vector/halftone-background-with-circles_13295064.htm#query=website%20background&position=2&from_view=keyword&track=ais&uuid=1e020c6d-d1ae-48ea-bf3c-07c571085acb">Freepik</a></p>
-          <p>Other Legal stuff should go here if needed.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-    <!--Logo-->
-    <div class="container d-flex justify-content-center mt-4">
-      <img src="../assets/neptune_logo_tran.png" alt="Logo" class="img-fluid" />
+    <!-- Logo -->
+    <div class="top-image-container">
+      <img src="/img/neptunePNG.png" alt="Descriptive Alt Text" class="img-fluid" />
     </div>
 
-    <!--Text below image-->
+     <!-- Log In Button -->
+     <div class="login-button-container">
+      <button @click="handleLoginClick">Log In</button>
+    </div>
+
+    <!-- Text below image -->
     <div class="bg-transparent mt-1">
-      <h1 style="font-family: Arial; font-size: 32px; color: whitesmoke;">Introducing Neptune</h1>
-      <p style="font-family: Verdana; font-size: 16px; color: whitesmoke;">A cutting edge messenging app with cybersecurity and user modularity at the front of its design philosophy.</p>
-    </div>
+  <p style="font-size: 16px;">Connect Across Galaxies with Neptune's Secure Chat</p>
+</div>
 
     <!-- Carousel (very cool) -->
     <div class="container mt-4">
@@ -68,8 +52,6 @@
         </div>
       </div>
     </div>
-
-
   </div>
 </template>
 
@@ -89,6 +71,11 @@ export default {
     Navigation,
   },
   methods: {
+
+    handleLoginClick() {
+      // Redirect to login page or open login modal
+      console.log("Log In button clicked"); // Placeholder action
+    },
     handleCardClick(card) {
       if (card.id === 1) {
         // Assuming you have routes named '/login' and '/register'
@@ -103,21 +90,18 @@ export default {
   data() {
     return {
       images: [
-        { src: '/img/Slide1.jpg', title: 'Cutting Edge Cybersecurity business', description: 'We are doing some cool stuff here' },
-        { src: '/img/Slide1.jpg', title: 'Image Title 2', description: 'Image description 2' },
-        { src: '/img/Slide1.jpg', title: 'Image Title 3', description: 'Image description 3' },
+        { src: '/img/Slide1.jpg', title: 'Big News!!', description: 'Neptune has finally launched' },
+        { src: '/img/Slide2.jpg', title: 'Image Title 2', description: 'Image description 2' },
+        { src: '/img/Slide3.jpg', title: 'Image Title 3', description: 'Image description 3' },
       ],
       cards: [
-        {
-          id: 1,
-          title: 'Login/Register',
-          description: 'Click here to create an account or log in'
-        },
-        {
-          id: 2,
-          title: 'Info/Legal',
-          description: 'Click here for boring stuff'
-        }
+
+      {
+        id: 1,
+        title: 'Login/Register',
+        description: 'Click here to create an account or log in'
+      }
+     
       ]
     };
   },
@@ -125,6 +109,20 @@ export default {
 </script>
 
 <style scoped>
+
+/* Neptune Logo at the top */
+   .top-image-container img {
+    max-width: 100%;
+    max-height: 200px; 
+    height: auto; 
+    display: block;
+    margin: 0 auto; 
+  }
+
+  .top-image-container img {
+    max-width: 100%; /* Ensures the image is responsive */
+    height: auto; /* Maintains aspect ratio */
+  }
   .full-screen-background {
     /* Set the background to cover the whole screen */
     position: fixed;
@@ -135,11 +133,29 @@ export default {
     overflow:auto;
     
     /* Background styling */
-    background-image: url('/img/Homepage_background.jpg'); /* You can use a color, gradient, or image */
+    background-image: url('/img/Homepage_background.png'); /* You can use a color, gradient, or image */
     background-size: cover; /* Ensure the background covers the entire area */
     background-position: center; /* Center the background */
     /* Optionally, you can add more styling for the content within this div */
   }
+
+
+   /* Login Button */
+
+  .login-button-container {
+  position: absolute;
+  top: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+}
+
+.login-button-container button {
+  padding: 10px 15px;
+  background-color: #007bff; /* Adjust color as needed */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
   .carousel__item {
     position: relative;
@@ -148,14 +164,16 @@ export default {
     background-color: transparent;
   }
 
-  .carousel__item-image {
+ .carousel__item-image {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 100%; /* Keeps the image stretched to the container's bounds */
+  object-fit: cover; /* Will crop the image to cover the area */
 }
+
+
 
 .carousel__item-text {
   position: absolute;
@@ -201,4 +219,65 @@ export default {
 .modal-backdrop {
   z-index: 1000 !important;
 }
+
+.modal-content {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  font-family: 'Times New Roman', serif;
+}
+
+.logo {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.bg-transparent {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  flex-direction: column;
+  margin-top: 1rem; 
+  color: whitesmoke; 
+  font-family: Verdana; 
+  font-size: 16px; 
+}
+
+.bg-transparent p {
+  font-weight: bold;
+  /* Creating an outline effect with text-shadow */
+  text-shadow:
+    -1px -1px 0 rgba(0, 0, 0, 0.8),  
+     1px -1px 0 rgba(0, 0, 0, 0.8),
+    -1px  1px 0 rgba(0, 0, 0, 0.8),
+     1px  1px 0 rgba(0, 0, 0, 0.8);
+}
+
+
+
+
+.carousel__item img {
+  border-radius: 10px;
+}
+
+.carousel__item-text {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+}
+
+.card {
+  background: linear-gradient(145deg, #0056b3, #0096ff);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
+}
+
+.paragraph-box {
+  font-family: 'Arial', sans-serif;
+  padding: 30px;
+}
+
 </style>
