@@ -333,9 +333,11 @@ div.name {
 }
 
 div.content {
+    margin-bottom: 1%;
     margin-left: 0%;
     padding: 1px 16px;
-    height: 85%;
+    max-height: 85%; /* Set a maximum height for scrolling */
+    overflow-y: auto;
 }
 
 /* Chat containers */
