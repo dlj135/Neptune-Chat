@@ -66,7 +66,7 @@
         </div>
     </div>
 </template>
-  
+
 <script>
 import { onMounted, ref, watchEffect } from "vue";
 import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp, query, where, orderBy, limit, onSnapshot } from "@/firebase";
@@ -88,7 +88,7 @@ export default {
         let uid;
         let selectedUserUid = ref(null);
         let allMessages = ref([]); // Adding an array to house ALL messages together
-        
+
 
         onMounted(async () => {
             auth = getAuth();
@@ -138,7 +138,9 @@ export default {
                     const allUserMessages = []; // Gather ALL messages here
                     querySnapshot.forEach((doc) => {
                         // Add all messages to the combined array
-                        allUserMessages.push(doc.data());
+                        allUserMessages.push({
+                            ...doc.data(),
+                            messageText: decryptMessage(doc.data().messageText)});
                     });
                     allMessages.value = allUserMessages; // Set this for all message array
                 });
@@ -151,16 +153,49 @@ export default {
             });
         };
 
+        const encryptMessage = (message) => {
+            // Convert the message to an array of characters
+            const charArray = message.split('');
+
+            // Iterate through each character and add 8 to its ASCII value
+            const encryptedArray = charArray.map((char) => {
+                const encryptedChar = String.fromCharCode(char.charCodeAt(0) + 8);
+                return encryptedChar;
+            });
+
+            // Join the encrypted characters back into a string
+            const encryptedMessage = encryptedArray.join('');
+
+            return encryptedMessage;
+        };
+
+        const decryptMessage = (encryptedMessage) => {
+            // Convert the encrypted message to an array of characters
+            const charArray = encryptedMessage.split('');
+
+            // Iterate through each character and subtract 8 from its ASCII value
+            const decryptedArray = charArray.map((char) => {
+                const decryptedChar = String.fromCharCode(char.charCodeAt(0) - 8);
+                return decryptedChar;
+            });
+
+            // Join the decrypted characters back into a string
+            const decryptedMessage = decryptedArray.join('');
+
+            return decryptedMessage;
+        };
+
         const addMessage = async () => {
-            if (newmessage.value === ""){
+            if (newmessage.value === "") {
                 return;
             }
             if (selectedUserUid.value) {
                 const user = auth.currentUser;
                 if (user !== null) {
                     const uid = user.uid;
+                    const encryptedMessage = encryptMessage(newmessage.value);
                     await addDoc(collection(db, "Messages"), {
-                        messageText: newmessage.value,
+                        messageText: encryptedMessage,
                         senderId: uid,
                         participantsIds: [uid, selectedUserUid.value].sort().join('_'),
                         createdAt: serverTimestamp(),
@@ -187,7 +222,6 @@ export default {
             // Select the user in the sidebar and update the UID
             selectedUserUid.value = user.uid;
             selectedUserAlias.value = user.alias;
-
             // Fetch messages for the selected user
             fetchMessages();
         };
@@ -354,7 +388,8 @@ div.content {
     margin-bottom: 1%;
     margin-left: 0%;
     padding: 1px 16px;
-    max-height: 85%; /* Set a maximum height for scrolling */
+    max-height: 85%;
+    /* Set a maximum height for scrolling */
     width: 85%;
     overflow-y: auto;
 }
@@ -444,7 +479,7 @@ div.content {
     position: relative;
 }
 
-.search-container input{
+.search-container input {
     border: 3px solid black;
     border-radius: 5px;
 }
