@@ -165,8 +165,8 @@ export default {
                         participantsIds: [uid, selectedUserUid.value].sort().join('_'),
                         createdAt: serverTimestamp(),
                     });
-                    newmessage.value = '';
                 }
+                newmessage.value = '';
             } else {
                 console.log('No user selected');
             }
