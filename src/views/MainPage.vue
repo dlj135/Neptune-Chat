@@ -444,6 +444,11 @@ div.content {
     position: relative;
 }
 
+.search-container input{
+    border: 3px solid black;
+    border-radius: 5px;
+}
+
 .search-results {
     position: absolute;
     top: 100%;
