@@ -38,7 +38,7 @@
                 <!-- <div v-for="(message) in [receive, history].sort((a, b) => a.createdAt.toDate().toLocaleTimeString() - b.createdAt.toDate().toLocaleTimeString())"  :class="{'containerr': message.senderId !== uid, 'containerr darker': message.senderId === uid}">
                     <p>{{ message.messageText }}</p>
                     <p>{{ message.createdAt.toDate().toLocaleTimeString() }}</p>
-                </div> -->
+                </div>
                 <div class="containerr" v-for="(message) in receive" :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
@@ -47,6 +47,16 @@
                     :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                </div> -->
+                <div v-for="(message) in allMessages" :key="message.createdAt.toDate().toLocaleTimeString()">
+                    <div class="containerr" v-if="message.senderId !== loggedinuser">
+                        <p>{{ message.messageText }}</p>
+                        <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                    </div>
+                    <div class="containerr darker" v-if="message.senderId === loggedinuser">
+                        <p>{{ message.messageText }}</p>
+                        <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                    </div>
                 </div>
             </div>
             <div class="createMessage">
@@ -71,13 +81,14 @@ export default {
         const selectedUserAlias = ref(null);
         const searchInput = ref('');
         const searchResults = ref([]);
+        const sidebarUsers = ref([]);
+
         let auth;
         let user;
         let uid;
         let selectedUserUid = ref(null);
-        let receive = ref([]);
-        let history = ref([]);
-        const sidebarUsers = ref([]);
+        let allMessages = ref([]); // Adding an array to house ALL messages together
+        
 
         onMounted(async () => {
             auth = getAuth();
@@ -124,17 +135,12 @@ export default {
                 const combinedIds = [uid, selectedUserUid.value].sort().join('_');
                 const q = await query(collection(db, "Messages"), where("participantsIds", "==", combinedIds), orderBy("createdAt"));
                 onSnapshot(q, (querySnapshot) => {
-                    const user1messages = [];
-                    const user2messages = [];
+                    const allUserMessages = []; // Gather ALL messages here
                     querySnapshot.forEach((doc) => {
-                        if (doc.data().senderId == uid) {
-                            user2messages.push(doc.data());
-                        } else {
-                            user1messages.push(doc.data());
-                        }
+                        // Add all messages to the combined array
+                        allUserMessages.push(doc.data());
                     });
-                    receive.value = user1messages;
-                    history.value = user2messages;
+                    allMessages.value = allUserMessages; // Set this for all message array
                 });
             }
         };
@@ -197,6 +203,10 @@ export default {
             }
         });
 
+        auth = getAuth();
+        user = auth.currentUser;
+        const loggedinuser = user.uid;
+
         return {
             isLoggedIn,
             newmessage,
@@ -204,8 +214,8 @@ export default {
             selectedUserAlias,
             searchInput,
             searchResults,
-            receive,
-            history,
+            allMessages,
+            loggedinuser,
             handleSignOut,
             addMessage,
             addUserToSidebar,
