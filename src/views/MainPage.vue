@@ -6,9 +6,7 @@
         <header class="main-header">
             <img id="profilePicture" src="/img/default_pfp.jpg" alt="Profile Picture" class="profile-picture">
             <div class="icons">
-                <span class="material-icons">home</span>
-                <span class="material-icons">import_contacts</span>
-                <span class="material-icons">chat</span>
+                <router-link to="/" class="material-icons icon-hover">home</router-link>
             </div>
             <div class="search-container">
                 <input v-model="searchInput" type="text" placeholder="Search for a user...">
@@ -245,23 +243,31 @@ header {
 }
 
 .profile-picture {
-    display: inline-block;
     width: 25px;
     height: 25px;
     border-radius: 50%;
     background-color: #ccc;
-    margin-left: 25px;
+    margin: 0 10px; /* Adjust margin for alignment */
 }
 
 .icons {
     display: flex;
+    align-items: center; /* Align items vertically */
     margin-right: 20px;
-    width: 75px;
 }
 
 .icons span {
     padding-right: 30px;
 }
+
+.icon-hover:hover {
+    color: white;
+}
+
+.icons .material-icons, .icons .icon-hover {
+  display: inline-block; 
+}
+
 
 .logout-button {
     padding: 5px 10px;
@@ -379,6 +385,19 @@ div.content {
   margin-left: 20px;
   margin-right:0;
 } */
+
+/* Adjust the main header */
+header.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Ensure vertical alignment */
+    height: 5%;
+    width: 90%;
+    margin: 10px auto; /* Center the header */
+    background-color: rgb(130, 171, 247);
+    border-radius: 25px !important;
+    border: 3px solid rgb(130, 171, 247);
+}
 
 /* Style time text */
 .time-right {

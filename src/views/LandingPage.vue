@@ -44,7 +44,9 @@
             </div>
           </div>
         </div>
+        <h3 class="neptune-title">What Is Neptune?</h3>
         <div class="col-md-6" style="border: 2px solid #007bff; border-radius: 10px;">
+
           <div class="paragraph-box" style="background-color: black; color: white; padding: 20px;">
             <p>Neptune is a real-time messaging service that allows users to communicate securely on the internet. Our goal is to give our users a space in which they can feel safe and secure with their data in transit. Neptune was created by four cybersecurity students from Florida Southern College.</p>
           </div>
@@ -212,6 +214,15 @@ export default {
 
 .card:hover {
   transform: scale(1.1);
+}
+
+.neptune-title {
+  color: whitesmoke; 
+  text-align: center;
+  padding-top: 5px;
+  font-size: 80px;
+  font-family: Verdana; 
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
 }
 
 .modal-backdrop {
