@@ -36,7 +36,7 @@
                 <!-- <div v-for="(message) in [receive, history].sort((a, b) => a.createdAt.toDate().toLocaleTimeString() - b.createdAt.toDate().toLocaleTimeString())"  :class="{'containerr': message.senderId !== uid, 'containerr darker': message.senderId === uid}">
                     <p>{{ message.messageText }}</p>
                     <p>{{ message.createdAt.toDate().toLocaleTimeString() }}</p>
-                </div> -->
+                </div>
                 <div class="containerr" v-for="(message) in receive" :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
@@ -45,6 +45,16 @@
                     :key="message.createdAt.toDate().toLocaleTimeString()">
                     <p>{{ message.messageText }}</p>
                     <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                </div> -->
+                <div v-for="(message) in allMessages" :key="message.createdAt.toDate().toLocaleTimeString()">
+                    <div class="containerr" v-if="message.senderId !== loggedinuser">
+                        <p>{{ message.messageText }}</p>
+                        <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                    </div>
+                    <div class="containerr darker" v-if="message.senderId === loggedinuser">
+                        <p>{{ message.messageText }}</p>
+                        <span class="time-right">{{ message.createdAt.toDate().toLocaleTimeString() }}</span>
+                    </div>
                 </div>
             </div>
             <div class="createMessage">
@@ -54,7 +64,7 @@
         </div>
     </div>
 </template>
-  
+
 <script>
 import { onMounted, ref, watchEffect } from "vue";
 import { getAuth, onAuthStateChanged, signOut, getDocs, collection, db, addDoc, serverTimestamp, query, where, orderBy, limit, onSnapshot } from "@/firebase";
@@ -69,13 +79,14 @@ export default {
         const selectedUserAlias = ref(null);
         const searchInput = ref('');
         const searchResults = ref([]);
+        const sidebarUsers = ref([]);
+
         let auth;
         let user;
         let uid;
         let selectedUserUid = ref(null);
-        let receive = ref([]);
-        let history = ref([]);
-        const sidebarUsers = ref([]);
+        let allMessages = ref([]); // Adding an array to house ALL messages together
+
 
         onMounted(async () => {
             auth = getAuth();
@@ -122,17 +133,14 @@ export default {
                 const combinedIds = [uid, selectedUserUid.value].sort().join('_');
                 const q = await query(collection(db, "Messages"), where("participantsIds", "==", combinedIds), orderBy("createdAt"));
                 onSnapshot(q, (querySnapshot) => {
-                    const user1messages = [];
-                    const user2messages = [];
+                    const allUserMessages = []; // Gather ALL messages here
                     querySnapshot.forEach((doc) => {
-                        if (doc.data().senderId == uid) {
-                            user2messages.push(doc.data());
-                        } else {
-                            user1messages.push(doc.data());
-                        }
+                        // Add all messages to the combined array
+                        allUserMessages.push({
+                            ...doc.data(),
+                            messageText: decryptMessage(doc.data().messageText)});
                     });
-                    receive.value = user1messages;
-                    history.value = user2messages;
+                    allMessages.value = allUserMessages; // Set this for all message array
                 });
             }
         };
@@ -143,18 +151,55 @@ export default {
             });
         };
 
+        const encryptMessage = (message) => {
+            // Convert the message to an array of characters
+            const charArray = message.split('');
+
+            // Iterate through each character and add 8 to its ASCII value
+            const encryptedArray = charArray.map((char) => {
+                const encryptedChar = String.fromCharCode(char.charCodeAt(0) + 8);
+                return encryptedChar;
+            });
+
+            // Join the encrypted characters back into a string
+            const encryptedMessage = encryptedArray.join('');
+
+            return encryptedMessage;
+        };
+
+        const decryptMessage = (encryptedMessage) => {
+            // Convert the encrypted message to an array of characters
+            const charArray = encryptedMessage.split('');
+
+            // Iterate through each character and subtract 8 from its ASCII value
+            const decryptedArray = charArray.map((char) => {
+                const decryptedChar = String.fromCharCode(char.charCodeAt(0) - 8);
+                return decryptedChar;
+            });
+
+            // Join the decrypted characters back into a string
+            const decryptedMessage = decryptedArray.join('');
+
+            return decryptedMessage;
+        };
+
         const addMessage = async () => {
+            if (newmessage.value === "") {
+                return;
+            }
             if (selectedUserUid.value) {
                 const user = auth.currentUser;
                 if (user !== null) {
                     const uid = user.uid;
+                    const encryptedMessage = encryptMessage(newmessage.value);
                     await addDoc(collection(db, "Messages"), {
-                        messageText: newmessage.value,
+                        messageText: encryptedMessage,
                         senderId: uid,
                         participantsIds: [uid, selectedUserUid.value].sort().join('_'),
                         createdAt: serverTimestamp(),
                     });
                 }
+                newmessage.value = '';
             } else {
                 console.log('No user selected');
             }
@@ -175,7 +220,6 @@ export default {
             // Select the user in the sidebar and update the UID
             selectedUserUid.value = user.uid;
             selectedUserAlias.value = user.alias;
-
             // Fetch messages for the selected user
             fetchMessages();
         };
@@ -191,6 +235,10 @@ export default {
             }
         });
 
+        auth = getAuth();
+        user = auth.currentUser;
+        const loggedinuser = user.uid;
+
         return {
             isLoggedIn,
             newmessage,
@@ -198,8 +246,8 @@ export default {
             selectedUserAlias,
             searchInput,
             searchResults,
-            receive,
-            history,
+            allMessages,
+            loggedinuser,
             handleSignOut,
             addMessage,
             addUserToSidebar,
@@ -319,30 +367,36 @@ header {
 
 /* Middle of the page */
 div.name {
-    margin: 0;
-    padding: 0;
-    width: 75%;
-    height: 78%;
-    position: absolute;
-    right: 7%;
+    display: flex;
+    flex-direction: column;
+    height: 85vh;
     color: white;
+    margin-left: 18%;
 }
 
 .name h5 {
-    margin: 2%;
+    margin-top: 2%;
+    margin-left: 2%;
+    margin-bottom: 1%;
+    line-height: 20px;
     text-align: left;
     font-weight: bold;
+    font-size: 2rem;
 }
 
 .name hr {
     margin-left: 2%;
+    width: 85%;
 }
 
 div.content {
+    flex: 1;
     margin-bottom: 1%;
     margin-left: 0%;
     padding: 1px 16px;
-    max-height: 85%; /* Set a maximum height for scrolling */
+    max-height: 85%;
+    /* Set a maximum height for scrolling */
+    width: 85%;
     overflow-y: auto;
 }
 
@@ -410,7 +464,7 @@ header.main-header {
 }
 
 .createMessage {
-    margin-left: 15%;
+    margin-left: 5%;
     padding: 10px;
     border: 3px solid #dedede;
     background-color: #343434;
@@ -418,6 +472,7 @@ header.main-header {
     display: flex;
     justify-content: space-between;
     border-radius: 10px;
+    margin-top: auto;
 }
 
 .createMessage input {
@@ -441,6 +496,11 @@ header.main-header {
 /* Search container and results */
 .search-container {
     position: relative;
+}
+
+.search-container input {
+    border: 3px solid black;
+    border-radius: 5px;
 }
 
 .search-results {
