@@ -7,11 +7,16 @@ import {
   onAuthStateChanged, signInWithPopup, signOut 
 } from "firebase/auth";
 
+import { dotenv } from "dotenv";
+dotenv.config();
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 
+
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDg175AidURF6LpgHYZS3J8SQPVhn8dORc",
+  apiKey: fbase.env.FBASE_KEY,
   authDomain: "senior-project-41ab5.firebaseapp.com",
   databaseURL: "https://senior-project-41ab5-default-rtdb.firebaseio.com/",
   projectId: "senior-project-41ab5",
